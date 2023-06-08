@@ -3,20 +3,25 @@ import random
 
 def displayGrid(table):
     tableHeight=len(table)
-    for j in range(0, tableHeight):
+    for row in range(0, tableHeight):
         lines = ""
-        content = ""
-        tableWith=len(table[j])
-        for i in range(0, tableWith+1):
-            if i == tableWith:
+        content = str(int(row)+1)
+        tableWith=len(table[row])
+        for column in range(0, tableWith+1):
+            if column == tableWith:
                 content += "|"
                 lines += "-"
             else:
-                content += "|"+table[j][i]
+                content += "|"+table[row][column]
                 lines += "--"
         print(lines)
         print(content)
     print(lines)
+    content=""
+    for column in range(0, tableWith+1):
+        content+=str(column)+"|"
+    print(content)
+
 
 # createGrid(10,30)
 
@@ -50,4 +55,4 @@ def fillGrigWithX(tableToFill, k):
     return tableToFill
 
 
-displayGrid(fillGrigWithX(createGrid(4, 5), 5))
+displayGrid(fillGrigWithX(createGrid(9, 9), 10))
