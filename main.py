@@ -17,11 +17,34 @@ def displayGrid(table):
         print(lines)
         print(content)
     print(lines)
+    print(lines)
     content=""
     for column in range(0, tableWith+1):
         content+=str(column)+"|"
     print(content)
 
+
+def displayHollowGrid(table):
+    tableHeight=len(table)
+    for row in range(0, tableHeight):
+        lines = ""
+        content = str(int(row)+1)
+        tableWith=len(table[row])
+        for column in range(0, tableWith+1):
+            if column == tableWith:
+                content += "|"
+                lines += "-"
+            else:
+                content += "|"+"_"
+                lines += "--"
+        print(lines)
+        print(content)
+    print(lines)
+    print(lines)
+    content=""
+    for column in range(0, tableWith+1):
+        content+=str(column)+"|"
+    print(content)
 
 # createGrid(10,30)
 
@@ -56,3 +79,5 @@ def fillGrigWithX(tableToFill, k):
 
 
 displayGrid(fillGrigWithX(createGrid(9, 9), 10))
+
+displayHollowGrid(fillGrigWithX(createGrid(9, 9), 10))
