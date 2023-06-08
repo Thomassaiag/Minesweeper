@@ -1,25 +1,27 @@
 import random
 
 
-def createGrid(m, n):
-    for _ in range(0, m):
+def displayGrid(table):
+    tableHeight = len(table)
+    for j in range(0, tableHeight):
         lines = ""
         content = ""
-        for i in range(0, n):
-            if i == n-1:
+        tableWith = len(table[j])
+        for i in range(0, tableWith+1):
+            if i == tableWith:
                 content += "|"
                 lines += "-"
             else:
-                content += "|O"
+                content += "|"+table[j][i]
                 lines += "--"
         print(lines)
         print(content)
-
+    print(lines)
 
 # createGrid(10,30)
 
 
-def createGrid2(m, n):
+def createGrid(m, n):
     globalArray = []
     for _ in range(0, m):
         lineArray = []
@@ -29,9 +31,6 @@ def createGrid2(m, n):
         # print(globalArray)
     print(globalArray)
     return globalArray
-
-
-# createGrid2(4, 5)
 
 
 def fillGrigWithX(tableToFill, k):
@@ -48,14 +47,13 @@ def fillGrigWithX(tableToFill, k):
             print(f"j={j}")
             randInt = random.randint(1, gridHeight)
             print(f"randInt={randInt}")
-            if randInt == 1 and tableToFill[i][j] != "X" and len(kArray)!=0:
+            if randInt == 1 and tableToFill[i][j] != "X" and len(kArray) != 0:
                 tableToFill[i][j] = "X"
                 kArray.pop()
                 print(f"longueur karray={len(kArray)}")
-            
 
     print(tableToFill)
     return tableToFill
 
 
-fillGrigWithX(createGrid2(4, 5), 5)
+displayGrid(fillGrigWithX(createGrid(4, 5), 5))
