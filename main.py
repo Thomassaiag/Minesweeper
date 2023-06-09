@@ -123,25 +123,30 @@ neutralGridTable = createGridTable(gridHeight, gridWidth,"_")
 neutralGrid=displayGrid(neutralGridTable)
 
 
+#vérifivation de l'input de l'utilisateur en tant qu'entier
 def checkUserInput(input):
-    print("fonction checkUserInput")
     val=0
     try:
         val=int(input)
-        print(val)
         return val
     except ValueError:
-        print("checkUserInput function = ValueError")
         return "notAnInt"
+    
+
+def checkCoordAlreadyProvided(hcoord, wcoord):
+    if (neutralGridTable[int(hcoord)-1][int(wcoord)-1])=="_":
+        return True
+    else:
+        print("Vous avez déjà renseigné cette coordonnée")
+        return False
+    
 
 
-def requestUserCoordinate(dimensionName, dimensiovalue):
-    print("fonction requestUserCoordinate")
+#boucle répétant la demande de l'input s'il ne s'agît pas d'un entier
+def requestUserCoordinate(dimensionName, dimensionvalue):
     while True:
-        coordinate = input(f"Choisissez la coordonnée {dimensionName} (entre 1 et {dimensiovalue}) : ")
-        print(f"requestUserCoordinate= {checkUserInput(coordinate)}")
+        coordinate = input(f"Choisissez la coordonnée {dimensionName} (entre 1 et {dimensionvalue}) : ")
         if checkUserInput(coordinate)!="notAnInt":
-            print("if")
             break
     return coordinate
 
@@ -154,11 +159,13 @@ tourCount=0
 # i=1
 while game:
     print(tableWithXGrid)
-    hCoordinate=requestUserCoordinate("verticale", gridHeight)
-    wCoordinate=requestUserCoordinate("horizontale", gridWidth)
-
-    table=revealTablewithNumber(neutralGridTable,hCoordinate,wCoordinate)
-    displayGrid(table)
+    while True:
+        hCoordinate=requestUserCoordinate("verticale", gridHeight)
+        wCoordinate=requestUserCoordinate("horizontale", gridWidth)
+        if checkCoordAlreadyProvided(hCoordinate,wCoordinate):
+            break
+    neutralGridTable=revealTablewithNumber(neutralGridTable,hCoordinate,wCoordinate)
+    displayGrid(neutralGridTable)
     tourCount+=1
     if tourCount==gridSize-minesNumber:
         print("Bravo, vous avez gagné !")
