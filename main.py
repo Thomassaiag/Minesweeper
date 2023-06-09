@@ -17,7 +17,7 @@ def displayGrid(genericTable):
                 content += "|"
                 lines += "-"
             else:
-                content += "|"+genericTable[row][column]
+                content += "|"+str(genericTable[row][column])
                 lines += "--"
         print(lines)
         print(content)
@@ -63,16 +63,53 @@ def fillGridTableWithX(tableToFill, k):
     tableWithXGrid=tableToFill# print(tableToFill)
     return tableWithXGrid
 
-
+#fonction d'affichage de la case sélectionnée par les coordonnées
 def revealTable(tableToReveal,hCoord,wCoord):
     global tableWithXGrid
     tableToReveal[int(hCoord)-1][int(wCoord)-1]=tableWithXGrid[int(hCoord)-1][int(wCoord)-1]
     return tableToReveal
 
+#fonction d'affichage des indice chiffrés
+def revealHintNumber(hCoord,wCoord):
+    #initialisation du compteur de mine
+    mineCounter=0
+    #initialisation des coordonnées de début de recherche (coin supérieur gauche de la case sélectionnée)
+    hCoordToStartLoop=int(hCoord)-1
+    wCoordToStartLoop=int(wCoord)-1
+    #parcours des 8 cases adjacentes à la case sélectionnée
+    for hCoordCheck in range(hCoordToStartLoop,hCoordToStartLoop+3):
+        print(f"hCoordCheck: {hCoordCheck}")
+        for wCoordCheck in range(wCoordToStartLoop,wCoordToStartLoop+3):
+            print(f"wCoordCheck: {wCoordCheck}")
+            if(hCoordCheck!=0 and wCoordCheck!=0 and hCoordCheck!=gridHeight+1 and wCoordCheck!=gridWidth+1):
+                print(f"contenu tableau bombe: {tableWithXGrid[hCoordCheck-1][wCoordCheck-1]}")
+            if(hCoordCheck!=0 and wCoordCheck!=0 and hCoordCheck!=gridHeight+1 and wCoordCheck!=gridWidth+1 and tableWithXGrid[hCoordCheck-1][wCoordCheck-1]=="X"):
+                mineCounter+=1
+    return mineCounter
 
-gridHeight=9
-gridWidth=9
-minesNumber = 10
+
+
+#fonction d'affichage de la case sélectionnée par les coordonnées
+def revealTablewithNumber(tableToReveal,hCoord,wCoord):
+    global tableWithXGrid
+    if tableWithXGrid[int(hCoord)-1][int(wCoord)-1]=="X":
+        tableToReveal[int(hCoord)-1][int(wCoord)-1]=tableWithXGrid[int(hCoord)-1][int(wCoord)-1]
+        print("Vous avez perdu")
+        global game
+        game=False
+    else:
+        tableToReveal[int(hCoord)-1][int(wCoord)-1]=revealHintNumber(hCoord,wCoord)
+
+    return tableToReveal
+
+
+#initialisation de la taille de la grille et du nombre de bombes
+
+
+
+gridHeight=int(input("Quelle hauteur de Grille souhaitez-vous ?"))
+gridWidth=int(input("Quelle largeur de Grille souhaitez-vous ?"))
+minesNumber = int(input("Combien de mines souhaitez-vous ?"))
 hCoordinate=0
 wCoordinate=0
 
@@ -81,17 +118,26 @@ emptyGridTable = createGridTable(gridHeight, gridWidth,"O")
 fillGridTableWithX(emptyGridTable, minesNumber)
 gridToGuess=displayGrid(tableWithXGrid)
 
+#création de la grille neutre
 neutralGridTable = createGridTable(gridHeight, gridWidth,"_")
 neutralGrid=displayGrid(neutralGridTable)
 
 
 gridSize=gridHeight*gridWidth
-i=1
-while i<gridSize:
+game=True
+tourCount=0
+#exécution du jeu
+# i=1
+while game:
+    print(tableWithXGrid)
     hCoordinate = input(f"Choisissez la coordonnée Verticale (entre 1 et {gridHeight}) : ")
     wCoordinate = input(f"Choisissez la coordonnée horizontale (entre 1 et {gridWidth}) : ")
-    table=revealTable(neutralGridTable,hCoordinate,wCoordinate)
+    table=revealTablewithNumber(neutralGridTable,hCoordinate,wCoordinate)
     displayGrid(table)
+    tourCount+=1
+    if tourCount==gridSize-minesNumber:
+        print("Bravo, vous avez gagné !")
+        game=False
     
 
 
