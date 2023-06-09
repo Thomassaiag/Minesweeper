@@ -124,14 +124,27 @@ neutralGrid=displayGrid(neutralGridTable)
 
 
 def checkUserInput(input):
+    print("fonction checkUserInput")
     val=0
     try:
         val=int(input)
         print(val)
         return val
     except ValueError:
-        print("ValueError")
-        return True
+        print("checkUserInput function = ValueError")
+        return "notAnInt"
+
+
+def requestUserCoordinate(dimensionName, dimensiovalue):
+    print("fonction requestUserCoordinate")
+    while True:
+        coordinate = input(f"Choisissez la coordonnée {dimensionName} (entre 1 et {dimensiovalue}) : ")
+        print(f"requestUserCoordinate= {checkUserInput(coordinate)}")
+        if checkUserInput(coordinate)!="notAnInt":
+            print("if")
+            break
+    return coordinate
+
 
 
 gridSize=gridHeight*gridWidth
@@ -141,16 +154,9 @@ tourCount=0
 # i=1
 while game:
     print(tableWithXGrid)
-    while True:
-        hCoordinate = input(f"Choisissez la coordonnée Verticale (entre 1 et {gridHeight}) : ")
-        print(checkUserInput(hCoordinate))
-        if checkUserInput(hCoordinate)!=True or checkUserInput(hCoordinate)==1:
-            break
-    while True:
-        wCoordinate = input(f"Choisissez la coordonnée horizontale (entre 1 et {gridWidth}) : ")
-        print(checkUserInput(wCoordinate))
-        if checkUserInput(wCoordinate)!=True or checkUserInput(wCoordinate)==1:
-            break
+    hCoordinate=requestUserCoordinate("verticale", gridHeight)
+    wCoordinate=requestUserCoordinate("horizontale", gridWidth)
+
     table=revealTablewithNumber(neutralGridTable,hCoordinate,wCoordinate)
     displayGrid(table)
     tourCount+=1
