@@ -1,5 +1,6 @@
 import random
 
+#initialisation de la variable globale tableWithXGrid
 tableWithXGrid=[]
 
 #affichage de n'importe quelle grille prenant en paramètre n'importe quel tableau
@@ -8,7 +9,7 @@ def displayGrid(genericTable):
     for row in range(0, tableHeight):
         #initialisation des 1ères valeurs de colonne et de ligne (avec le numéro de ligne pour cette dernière)
         lines = " "
-        content = str(int(row)+1)
+        content = str(row+1)
         tableWidth = len(genericTable[row])
         for column in range(0, tableWidth+1):
             #remplissage de la grille avec le contenu du tableau donné en paramètre
@@ -27,6 +28,7 @@ def displayGrid(genericTable):
     for column in range(0, tableWidth+1):
         content += str(column)+"|"
     print(content)
+
 
 
 #création d'un tableau de dimensions m,n, rempli de "filler" donné en paramètre
@@ -49,7 +51,7 @@ def fillGridTableWithX(tableToFill, k):
     for _ in range(k):
         kArray.append("X")
     #tant que le tableau des bombes en contient, on essaye de placer des bombes de manière aléatoire, si la case n'en contient pas déjà une
-    #on vide le tableau de la bombe qu'on a placée.
+    #on vide le tableau de la bombe qu'on vient de placer
     while len(kArray) > 0:
         for i in range(0, gridHeight):
             gridWidth = len(tableToFill[i])
@@ -58,24 +60,19 @@ def fillGridTableWithX(tableToFill, k):
                 if randInt == 1 and tableToFill[i][j] != "X" and len(kArray) != 0:
                     tableToFill[i][j] = "X"
                     kArray.pop()
-                    # print(f"longueur karray={len(kArray)}")
+
     global tableWithXGrid
-    tableWithXGrid=tableToFill# print(tableToFill)
+    tableWithXGrid=tableToFill
     return tableWithXGrid
 
-#fonction d'affichage de la case sélectionnée par les coordonnées
-def revealTable(tableToReveal,hCoord,wCoord):
-    global tableWithXGrid
-    tableToReveal[int(hCoord)-1][int(wCoord)-1]=tableWithXGrid[int(hCoord)-1][int(wCoord)-1]
-    return tableToReveal
 
 #fonction d'affichage des indice chiffrés
 def revealHintNumber(hCoord,wCoord):
     #initialisation du compteur de mine
     mineCounter=0
     #initialisation des coordonnées de début de recherche (coin supérieur gauche de la case sélectionnée)
-    hCoordToStartLoop=int(hCoord)-1
-    wCoordToStartLoop=int(wCoord)-1
+    hCoordToStartLoop=hCoord-1
+    wCoordToStartLoop=wCoord-1
     #parcours des 8 cases adjacentes à la case sélectionnée
     for hCoordCheck in range(hCoordToStartLoop,hCoordToStartLoop+3):
         print(f"hCoordCheck: {hCoordCheck}")
@@ -92,71 +89,87 @@ def revealHintNumber(hCoord,wCoord):
 #fonction d'affichage de la case sélectionnée par les coordonnées
 def revealTablewithNumber(tableToReveal,hCoord,wCoord):
     global tableWithXGrid
-    if tableWithXGrid[int(hCoord)-1][int(wCoord)-1]=="X":
-        tableToReveal[int(hCoord)-1][int(wCoord)-1]=tableWithXGrid[int(hCoord)-1][int(wCoord)-1]
+    if tableWithXGrid[hCoord-1][wCoord-1]=="X":
+        tableToReveal[hCoord-1][wCoord-1]=tableWithXGrid[hCoord-1][wCoord-1]
         print("Vous avez perdu")
         global game
         game=False
     else:
-        tableToReveal[int(hCoord)-1][int(wCoord)-1]=revealHintNumber(hCoord,wCoord)
+        tableToReveal[hCoord-1][wCoord-1]=revealHintNumber(hCoord,wCoord)
 
     return tableToReveal
 
 
-#initialisation de la taille de la grille et du nombre de bombes
+#On vérifie si les coordonnées rentrées n'ont pas déjà été utilisées
+def checkCoordAlreadyProvided(hcoord, wcoord):
+    if (neutralGridTable[hcoord-1][wcoord-1])=="_":
+        return True
+    else:
+        print("Vous avez déjà renseigné ces coordonnées")
+        return False
 
 
-
-gridHeight=int(input("Quelle hauteur de Grille souhaitez-vous ?"))
-gridWidth=int(input("Quelle largeur de Grille souhaitez-vous ?"))
-minesNumber = int(input("Combien de mines souhaitez-vous ?"))
-hCoordinate=0
-wCoordinate=0
-
-
-emptyGridTable = createGridTable(gridHeight, gridWidth,"O")
-fillGridTableWithX(emptyGridTable, minesNumber)
-gridToGuess=displayGrid(tableWithXGrid)
-
-#création de la grille neutre
-neutralGridTable = createGridTable(gridHeight, gridWidth,"_")
-neutralGrid=displayGrid(neutralGridTable)
-
-
-#vérifivation de l'input de l'utilisateur en tant qu'entier
+#vérification de l'input de l'utilisateur en tant qu'entier
 def checkUserInput(input):
     val=0
     try:
         val=int(input)
         return val
     except ValueError:
+        print("Vous devez rentrer un entier")
         return "notAnInt"
     
 
-def checkCoordAlreadyProvided(hcoord, wcoord):
-    if (neutralGridTable[int(hcoord)-1][int(wcoord)-1])=="_":
-        return True
-    else:
-        print("Vous avez déjà renseigné cette coordonnée")
-        return False
-    
-
-
-#boucle répétant la demande de l'input s'il ne s'agît pas d'un entier
+#boucle répétant la demande de coordonnées tant qu'il ne s'agît pas d'un entier
 def requestUserCoordinate(dimensionName, dimensionvalue):
     while True:
         coordinate = input(f"Choisissez la coordonnée {dimensionName} (entre 1 et {dimensionvalue}) : ")
         if checkUserInput(coordinate)!="notAnInt":
             break
-    return coordinate
+    return int(coordinate)
 
+
+#boucle répétant la demande de taille initiale de la grille tant qu'il ne s'agît pas d'un entier
+def requestGridSetupDimensionsCoordinat(dimension):
+    while True:
+        size = input(f"Quelle {dimension} de Grille souhaitez-vous ?")
+        if checkUserInput(size)!="notAnInt":
+            break
+    return int(size)
+
+
+#________________________________________________________________________________________________________
+#Initialisation du jeu
+
+#initialisation de la taille de la grille et du nombre de bombes, en utilisant la validation d'entier
+gridHeight=requestGridSetupDimensionsCoordinat("hauteur")
+gridWidth=requestGridSetupDimensionsCoordinat("largeur")
+while True:
+    minesNumber = input("Combien de mines souhaitez-vous ?")
+    if checkUserInput(minesNumber)!="notAnInt":
+        break
+
+hCoordinate=0
+wCoordinate=0
+
+emptyGridTable = createGridTable(gridHeight, gridWidth,"O")
+fillGridTableWithX(emptyGridTable, int(minesNumber))
+gridToGuess=displayGrid(tableWithXGrid)
+
+
+#création de la grille neutre
+neutralGridTable = createGridTable(gridHeight, gridWidth,"_")
+neutralGrid=displayGrid(neutralGridTable)
 
 
 gridSize=gridHeight*gridWidth
 game=True
 tourCount=0
-#exécution du jeu
-# i=1
+
+
+#________________________________________________________________________________________________________
+#Exécution du jeu
+
 while game:
     print(tableWithXGrid)
     while True:
@@ -167,82 +180,6 @@ while game:
     neutralGridTable=revealTablewithNumber(neutralGridTable,hCoordinate,wCoordinate)
     displayGrid(neutralGridTable)
     tourCount+=1
-    if tourCount==gridSize-minesNumber:
+    if tourCount==gridSize-int(minesNumber):
         print("Bravo, vous avez gagné !")
         game=False
-    
-
-
-
-
-#affiche la table neutre, sans les cases vides ou les bombes, appelée une seule fois au début du jeu
-# def displayEmptyGrid(table):
-#     tableHeight = len(table)
-#     for row in range(0, tableHeight):
-#         lines = " "
-#         content = str(int(row)+1)
-#         tableWidth = len(table[row])
-#         for column in range(0, tableWidth+1):
-#             if column == tableWidth:
-#                 content += "|"
-#                 lines += "-"
-#             else:
-#                 content += "|"+"_"
-#                 lines += "--"
-#         print(lines)
-#         print(content)
-#     print(lines)
-#     content = ""
-#     for column in range(0, tableWidth+1):
-#         content += str(column)+"|"
-#     print(content)
-
-
-
-
-#affiche la table à révéler, pour les tests au début
-# def displayTrueGrid(arrayWithBombs):
-#     tableHeight = len(arrayWithBombs)
-#     for row in range(0, tableHeight):
-#         lines = " "
-#         content = str(int(row)+1)
-#         tableWidth = len(arrayWithBombs[row])
-#         for column in range(0, tableWidth+1):
-#             if column == tableWidth:
-#                 content += "|"
-#                 lines += "-"
-#             else:
-#                 content += "|"+arrayWithBombs[row][column]
-#                 lines += "--"
-#         print(lines)
-#         print(content)
-#     print(lines)
-#     content = ""
-#     for column in range(0, tableWidth+1):
-#         content += str(column)+"|"
-#     print(content)
-
-
-# def displayRevealedGrid(table):
-#     tableHeight = len(table)
-#     for row in range(0, tableHeight):
-#         lines = " "
-#         content = str(int(row)+1)
-#         tableWidth = len(table[row])
-#         for column in range(0, tableWidth+1):
-#             if column == tableWidth:
-#                 content += "|"
-#                 lines += "-"
-#             else:
-#                 if row== int(hCoordinate)-1 and column== int(wCoordinate)-1:
-#                     content+= "|"+table[row][column]
-#                 else:
-#                     content += "|"+"_"
-#                     lines += "--"
-#         print(lines)
-#         print(content)
-#     print(lines)
-#     content = ""
-#     for column in range(0, tableWidth+1):
-#         content += str(column)+"|"
-#     print(content)
